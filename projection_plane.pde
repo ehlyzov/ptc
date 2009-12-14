@@ -16,7 +16,7 @@ class ProjectionPlane {
    this.isTargetingEnable = false;
  }
  
- void draw() {    
+ void draw() {
   rect(0,0,this.ppWidth,this.ppHeight); 
  }
  
