@@ -1,10 +1,28 @@
+class Point {
+  float x;
+  float y;
+  float t; // stored value of parameter
+
+  Point(float[] coords) {
+    this.x = coords[0];
+    this.y = coords[1];
+  } 
+   
+  Point(float t, float x, float y) {
+    this.t = t;
+    this.x = x;
+    this.y = y; 
+  }
+   
+}
+
 class ProjectionPlane {
  int ppWidth;
  int ppHeight;
  int ppCenterX;
  int ppCenterY;
  Function f;
- float[] fData;
+ Point[] fData;
  boolean isTargetingEnable;
  
  ProjectionPlane(int w,int h,int c_x,int c_y, Function x) {
@@ -21,15 +39,17 @@ class ProjectionPlane {
  }
  
  int relXtoI(float x) {
-   return round((x/scaleX())/step());
+   println(x);
+   println(round(x/step()));
+   return round(x/step());
  }
  
  float iToRelX(int i) {
-   return (float)i*step()*scaleX();
+   return fData[i].x*scaleX();
  }
  
  float iToRelY(int i) {
-   return this.fData[i+3]*scaleY()+this.ppCenterY;
+   return fData[i].y*scaleY()+this.ppCenterY;
  }
  
  float[] iToCoords(int i) {
@@ -41,51 +61,50 @@ class ProjectionPlane {
   
  float start() {
    println("start");
-   return fData[0];
+   return fData[0].t;
  }
 
  float end() {
-   return fData[1];
+   return fData[fData.length-1].t;
  }
 
- float step() {
-   return fData[2];
+ float step() {   
+   //return (fData[fData.length-1].t - fData[0].t)/((float)fData.length);
+   return ppWidth/((float)fData.length);
  }
  
- float[] fData() {
+ Point[] fData() {
    return this.fData; 
- }
- 
- float absCoordX(float rel_x) {
-   return rel_x + 50.0;
- }
- 
- float absCoordY(float rel_y) {
-   return rel_y + 50.0;
- }
- 
+ } 
  
  void applyFunction(float start, float end, float step) {
-   this.fData = new float[(int)((end-start)/step)+4];
-   this.fData[0] = start;
-   this.fData[1] = end;
-   this.fData[2] = step;
-   float maxElement = 0.0;
+   fData = new Point[(int)((end-start)/step)+1];
+   
+   float maxValueX = 0.0;
+   float maxValueY = 0.0;
    float scaleX = this.ppWidth/(end-start);
    
-   int maxIndex = 0;
-   for(int i=3;start + (i-3.0)*step<=end;i+=1) {    
-     this.fData[i] = this.f.getValue((i-3.0)*step+start);
-     if(abs(this.fData[i]) > maxElement) {     
-       maxElement = abs(this.fData[i]);
+   int maxIndexX = 0;
+   int maxIndexY = 0;
+   
+   for(int i=0;start + i*step<=end;i+=1) {   
+     fData[i] = f.getPoint(i*step+start);      
+     if(abs(fData[i].y) > abs(fData[maxIndexY].y)) {     
+       maxIndexY = i;
      }
+     if(abs(fData[i].x) > abs(fData[maxIndexX].x)) {     
+       maxIndexX = i;
+     }     
    }
    
-   println("MAX Y: " + maxElement);
-   for(int i=3;start + (i-3.0)*step<=end;i+=1) {
-     //println("Before: " + this.fData[i]);
-     this.fData[i] = this.fData[i]/maxElement;
-     //println("After: " + this.fData[i]);
+   maxValueX = abs(fData[maxIndexX].x);
+   maxValueY = abs(fData[maxIndexY].y);   
+   println("MAX Y: " + fData[maxIndexY].y);
+   for(int i=0;i < fData.length;i+=1) {
+     println("Before: (" + fData[i].x + "," + fData[i].y + ")");
+     fData[i].y = fData[i].y/maxValueY;
+     fData[i].x = fData[i].x/maxValueX; 
+     println("After: (" + fData[i].x + "," + fData[i].y + ")");
    }
  }
  
@@ -95,7 +114,7 @@ class ProjectionPlane {
  }
  
  float scaleX() {
-   return this.ppWidth/(end()-start());
+   return this.ppWidth/2;
  }
  
  float scaleY() {
@@ -103,8 +122,10 @@ class ProjectionPlane {
  }
  
  void drawFunction() {
-   for(int i=3;start() + (i-3.0)*step()<end();i+=1) {     
-     point((i-3.0)*step()*scaleX(),this.fData[i]*scaleY()+this.ppCenterY);
+   println("scaleX: "+scaleX());
+   println("scaleY: "+scaleY());
+   for(int i=0;i < fData.length;i+=1) {     
+     point(fData[i].x*scaleX()+this.ppCenterX,fData[i].y*scaleY()+this.ppCenterY);
    }
  }
  
