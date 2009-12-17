@@ -45,7 +45,7 @@ class ProjectionPlane {
  }
  
  float iToRelX(int i) {
-   return fData[i].x*scaleX();
+   return fData[i].x*scaleX()+ppCenterX;
  }
  
  float iToRelY(int i) {

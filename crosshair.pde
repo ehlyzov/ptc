@@ -29,6 +29,7 @@ class Crosshair extends PLayer {
   void draw() {
     if (isLocked && isOver()) {     
       callback.run(mouseX-p.start_x, mouseY-p.start_y); 
+      translate(0,0);
       if (lockedToGraph) {
         changeFocus((float)(mouseX-p.start_x));
       } else {
@@ -38,10 +39,17 @@ class Crosshair extends PLayer {
   }
   
   void drawCrosshair(float x, float y) {
+    //pushMatrix();
+    println("shift x: "+p.start_x);
+    println("shift y: "+p.start_y);    
+    translate(p.start_x,p.start_y);
     background(0, 0);
-    float abs_x = p.absCoordX(x);
-    float abs_y = p.absCoordY(y);
-    ellipse(abs_x,abs_y, r, r);
+    println("ch x: "+x);
+    println("ch y: "+y);    
+    //float abs_x = p.absCoordX(x);
+    //float abs_y = p.absCoordY(y);
+    ellipse(x,y, r, r);
+    //popMatrix();
   }
 
   // START Mouse events  

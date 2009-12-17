@@ -74,7 +74,7 @@ void setup() {
   //ch = new Crosshair(this, pp, 5.0);
   h.addPP(pp, 50, 50, new TestChCallback(), true);
   h.addPP(pp_a, 50, 200, new FakeChCallback("FA"), true); 
-  h.addPP(pp_b, 50, 350, new FakeChCallback("FAB"), true);
+  h.addPP(pp_b, 50, 350, new FakeChCallback("FAB"), false);
 
   s.setValue(a); 
   // test

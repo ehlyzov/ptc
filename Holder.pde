@@ -48,7 +48,7 @@ class PPParams {
   }
   
   float absCoordX(float rel_x) {
-    return rel_x + start_x + pp.ppCenterX;
+    return rel_x + start_x;
   }
  
   float absCoordY(float rel_y) {
